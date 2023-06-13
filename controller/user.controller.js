@@ -1,7 +1,7 @@
 const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.user;
-const Token = db.token;
+
 const QRCode = require('qrcode');
 const nodemailer = require('nodemailer');
 
@@ -64,7 +64,8 @@ try {
         id: user._id,
         username: user.username,
         email: user.email,
-        accessToken: token
+        accessToken: token,
+        Qrcode :user.Qrcode
       });}
       catch(err){
 
@@ -136,8 +137,7 @@ async function qrsignin (req, res) {
         expiresIn:  2629200000 // one month
       });
 
-      const basetoken =new Token({ token, userId})
-      const savedtoken = await basetoken.save();
+      
       
       const qrCodeUrl = `http://localhost:4200/login?token=${encodeURIComponent(token)}`;
 
@@ -172,6 +172,18 @@ async function qrsignin (req, res) {
         console.log('Email sent:', info.response);
         res.json({ qrCodeUrl });
       });
+
+
+      // Save QR code URL in user model
+      try {
+        const user = await User.findOneAndUpdate(
+          { _id: userId },
+          { Qrcode: qrCodeUrlimg }
+        );
+        console.log('User QR code updated:', user);
+      } catch (error) {
+        console.log(error);
+      }
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: 'Internal server error' });
