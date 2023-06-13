@@ -12,10 +12,21 @@
     <p>
       <strong>Email:</strong>
       {{ currentUser.email }}
+      
     </p>
+    <p>
+      <strong>QrCode :</strong>
+      <img src="{{ currentUser.Qrcode }}" alt="QR Code">
+    </p>
+
     
   </div>
   
   <ng-template #loggedOut>
     Please login.
   </ng-template>
+
+
+
+
+  
